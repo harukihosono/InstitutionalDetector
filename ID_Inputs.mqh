@@ -14,28 +14,28 @@
 #ifdef IS_MQL5
    input group "基本設定"
 #else
-   input string   Separator0 = "════════════════════════════════";  // ═══ 基本設定 ═══
+   input string   Separator0 = "--------------------------------";  // === Basic Settings ===
 #endif
-input int      InpLookbackPeriod = 20;           // 参照期間
-input double   InpVolumeThreshold = 2.0;         // ボリューム閾値（σ）
-input double   InpPriceChangeThreshold = 0.0001; // 価格変動閾値
+input int      InpLookbackPeriod = 20;           // Lookback Period
+input double   InpVolumeThreshold = 2.0;         // Volume Threshold (sigma)
+input double   InpPriceChangeThreshold = 0.0001; // Price Change Threshold
 
 #ifdef IS_MQL5
    input group "検出設定"
 #else
-   input string   Separator1 = "════════════════════════════════";  // ═══ 検出設定 ═══
+   input string   Separator1 = "--------------------------------";  // === Detection Settings ===
 #endif
-input bool     InpDetectAggressive = true;       // アグレッシブ注文検出
-input bool     InpDetectAbsorption = true;       // 吸収注文検出
-input bool     InpDetectIceberg = true;          // アイスバーグ注文検出
+input bool     InpDetectAggressive = true;       // Detect Aggressive Orders
+input bool     InpDetectAbsorption = true;       // Detect Absorption Orders
+input bool     InpDetectIceberg = true;          // Detect Iceberg Orders
 
 #ifdef IS_MQL5
    input group "アラート設定"
 #else
-   input string   Separator2 = "════════════════════════════════";  // ═══ アラート設定 ═══
+   input string   Separator2 = "--------------------------------";  // === Alert Settings ===
 #endif
-input bool     InpShowAlerts = true;             // アラート表示
-input bool     InpSendNotification = false;      // プッシュ通知
-input bool     InpPlaySound = true;              // サウンド再生
+input bool     InpShowAlerts = true;             // Show Alerts
+input bool     InpSendNotification = false;      // Push Notification
+input bool     InpPlaySound = true;              // Play Sound
 
 #endif // ID_INPUTS_MQH
