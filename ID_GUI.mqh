@@ -20,8 +20,8 @@ void CreateSimpleGUI() {
    ObjectCreate(0, g_lblThresholdName, OBJ_LABEL, 0, 0, 0);
    ObjectSetInteger(0, g_lblThresholdName, OBJPROP_XDISTANCE, x);
    ObjectSetInteger(0, g_lblThresholdName, OBJPROP_YDISTANCE, y);
-   ObjectSetString(0, g_lblThresholdName, OBJPROP_TEXT, "Threshold:");
-   ObjectSetString(0, g_lblThresholdName, OBJPROP_FONT, FontName);
+   ObjectSetString(0, g_lblThresholdName, OBJPROP_TEXT, "閾値設定:");
+   ObjectSetString(0, g_lblThresholdName, OBJPROP_FONT, JpFontName);
    ObjectSetInteger(0, g_lblThresholdName, OBJPROP_FONTSIZE, 11);
    ObjectSetInteger(0, g_lblThresholdName, OBJPROP_COLOR, clrWhite);
 
@@ -39,7 +39,7 @@ void CreateSimpleGUI() {
    ObjectSetInteger(0, g_editThresholdName, OBJPROP_ALIGN, ALIGN_CENTER);
    ObjectSetString(0, g_editThresholdName, OBJPROP_FONT, FontName);
    ObjectSetInteger(0, g_editThresholdName, OBJPROP_FONTSIZE, 10);
-   ObjectSetString(0, g_editThresholdName, OBJPROP_TOOLTIP, "Enter threshold value (1.5-3.0 recommended)");
+   ObjectSetString(0, g_editThresholdName, OBJPROP_TOOLTIP, "閾値を入力（推奨: 1.5-3.0）");
 
    // Up Button
    ObjectCreate(0, g_btnUpName, OBJ_BUTTON, 0, 0, 0);
@@ -53,7 +53,7 @@ void CreateSimpleGUI() {
    ObjectSetInteger(0, g_btnUpName, OBJPROP_BORDER_COLOR, clrGray);
    ObjectSetString(0, g_btnUpName, OBJPROP_FONT, FontName);
    ObjectSetInteger(0, g_btnUpName, OBJPROP_FONTSIZE, 8);
-   ObjectSetString(0, g_btnUpName, OBJPROP_TOOLTIP, "Increase threshold by 0.1");
+   ObjectSetString(0, g_btnUpName, OBJPROP_TOOLTIP, "閾値を0.1上げる");
 
    // Down Button
    ObjectCreate(0, g_btnDownName, OBJ_BUTTON, 0, 0, 0);
@@ -67,7 +67,7 @@ void CreateSimpleGUI() {
    ObjectSetInteger(0, g_btnDownName, OBJPROP_BORDER_COLOR, clrGray);
    ObjectSetString(0, g_btnDownName, OBJPROP_FONT, FontName);
    ObjectSetInteger(0, g_btnDownName, OBJPROP_FONTSIZE, 8);
-   ObjectSetString(0, g_btnDownName, OBJPROP_TOOLTIP, "Decrease threshold by 0.1");
+   ObjectSetString(0, g_btnDownName, OBJPROP_TOOLTIP, "閾値を0.1下げる");
 
    // Apply Button
    ObjectCreate(0, g_btnApplyName, OBJ_BUTTON, 0, 0, 0);
@@ -75,35 +75,35 @@ void CreateSimpleGUI() {
    ObjectSetInteger(0, g_btnApplyName, OBJPROP_YDISTANCE, y);
    ObjectSetInteger(0, g_btnApplyName, OBJPROP_XSIZE, 50);
    ObjectSetInteger(0, g_btnApplyName, OBJPROP_YSIZE, 22);
-   ObjectSetString(0, g_btnApplyName, OBJPROP_TEXT, "Apply");
+   ObjectSetString(0, g_btnApplyName, OBJPROP_TEXT, "適用");
    ObjectSetInteger(0, g_btnApplyName, OBJPROP_COLOR, clrBlack);
    ObjectSetInteger(0, g_btnApplyName, OBJPROP_BGCOLOR, clrLime);
    ObjectSetInteger(0, g_btnApplyName, OBJPROP_BORDER_COLOR, clrGreen);
-   ObjectSetString(0, g_btnApplyName, OBJPROP_FONT, FontName);
+   ObjectSetString(0, g_btnApplyName, OBJPROP_FONT, JpFontName);
    ObjectSetInteger(0, g_btnApplyName, OBJPROP_FONTSIZE, 9);
-   ObjectSetString(0, g_btnApplyName, OBJPROP_TOOLTIP, "Apply threshold");
+   ObjectSetString(0, g_btnApplyName, OBJPROP_TOOLTIP, "閾値を適用");
 
    // Reset Button
    ObjectCreate(0, g_btnResetName, OBJ_BUTTON, 0, 0, 0);
    ObjectSetInteger(0, g_btnResetName, OBJPROP_XDISTANCE, x + 147);
    ObjectSetInteger(0, g_btnResetName, OBJPROP_YDISTANCE, y);
-   ObjectSetInteger(0, g_btnResetName, OBJPROP_XSIZE, 55);
+   ObjectSetInteger(0, g_btnResetName, OBJPROP_XSIZE, 60);
    ObjectSetInteger(0, g_btnResetName, OBJPROP_YSIZE, 22);
-   ObjectSetString(0, g_btnResetName, OBJPROP_TEXT, "Reset");
+   ObjectSetString(0, g_btnResetName, OBJPROP_TEXT, "リセット");
    ObjectSetInteger(0, g_btnResetName, OBJPROP_COLOR, clrWhite);
    ObjectSetInteger(0, g_btnResetName, OBJPROP_BGCOLOR, clrRed);
    ObjectSetInteger(0, g_btnResetName, OBJPROP_BORDER_COLOR, clrDarkRed);
-   ObjectSetString(0, g_btnResetName, OBJPROP_FONT, FontName);
+   ObjectSetString(0, g_btnResetName, OBJPROP_FONT, JpFontName);
    ObjectSetInteger(0, g_btnResetName, OBJPROP_FONTSIZE, 9);
-   ObjectSetString(0, g_btnResetName, OBJPROP_TOOLTIP, "Reset to default");
+   ObjectSetString(0, g_btnResetName, OBJPROP_TOOLTIP, "デフォルトに戻す");
 
    // Detection Type Label
    y += 35;
    ObjectCreate(0, g_lblDetectionName, OBJ_LABEL, 0, 0, 0);
    ObjectSetInteger(0, g_lblDetectionName, OBJPROP_XDISTANCE, x);
    ObjectSetInteger(0, g_lblDetectionName, OBJPROP_YDISTANCE, y);
-   ObjectSetString(0, g_lblDetectionName, OBJPROP_TEXT, "Detection Type:");
-   ObjectSetString(0, g_lblDetectionName, OBJPROP_FONT, FontName);
+   ObjectSetString(0, g_lblDetectionName, OBJPROP_TEXT, "検出タイプ:");
+   ObjectSetString(0, g_lblDetectionName, OBJPROP_FONT, JpFontName);
    ObjectSetInteger(0, g_lblDetectionName, OBJPROP_FONTSIZE, 11);
    ObjectSetInteger(0, g_lblDetectionName, OBJPROP_COLOR, clrWhite);
 
@@ -112,50 +112,50 @@ void CreateSimpleGUI() {
    ObjectCreate(0, g_chkAggressiveName, OBJ_BUTTON, 0, 0, 0);
    ObjectSetInteger(0, g_chkAggressiveName, OBJPROP_XDISTANCE, x);
    ObjectSetInteger(0, g_chkAggressiveName, OBJPROP_YDISTANCE, y);
-   ObjectSetInteger(0, g_chkAggressiveName, OBJPROP_XSIZE, 160);
+   ObjectSetInteger(0, g_chkAggressiveName, OBJPROP_XSIZE, 180);
    ObjectSetInteger(0, g_chkAggressiveName, OBJPROP_YSIZE, 22);
-   ObjectSetString(0, g_chkAggressiveName, OBJPROP_TEXT, (g_detectAggressive ? "[X]" : "[ ]") + " Aggressive");
+   ObjectSetString(0, g_chkAggressiveName, OBJPROP_TEXT, (g_detectAggressive ? "[X]" : "[ ]") + " アグレッシブ");
    ObjectSetInteger(0, g_chkAggressiveName, OBJPROP_COLOR, clrBlack);
    ObjectSetInteger(0, g_chkAggressiveName, OBJPROP_BGCOLOR, g_detectAggressive ? clrLightGreen : clrLightGray);
-   ObjectSetString(0, g_chkAggressiveName, OBJPROP_FONT, FontName);
+   ObjectSetString(0, g_chkAggressiveName, OBJPROP_FONT, JpFontName);
    ObjectSetInteger(0, g_chkAggressiveName, OBJPROP_FONTSIZE, 9);
-   ObjectSetString(0, g_chkAggressiveName, OBJPROP_TOOLTIP, "Large volume with price movement");
+   ObjectSetString(0, g_chkAggressiveName, OBJPROP_TOOLTIP, "価格変動を伴う大きなボリューム");
 
    // Checkbox (Absorption)
    y += 25;
    ObjectCreate(0, g_chkAbsorptionName, OBJ_BUTTON, 0, 0, 0);
    ObjectSetInteger(0, g_chkAbsorptionName, OBJPROP_XDISTANCE, x);
    ObjectSetInteger(0, g_chkAbsorptionName, OBJPROP_YDISTANCE, y);
-   ObjectSetInteger(0, g_chkAbsorptionName, OBJPROP_XSIZE, 160);
+   ObjectSetInteger(0, g_chkAbsorptionName, OBJPROP_XSIZE, 180);
    ObjectSetInteger(0, g_chkAbsorptionName, OBJPROP_YSIZE, 22);
-   ObjectSetString(0, g_chkAbsorptionName, OBJPROP_TEXT, (g_detectAbsorption ? "[X]" : "[ ]") + " Absorption");
+   ObjectSetString(0, g_chkAbsorptionName, OBJPROP_TEXT, (g_detectAbsorption ? "[X]" : "[ ]") + " 吸収注文");
    ObjectSetInteger(0, g_chkAbsorptionName, OBJPROP_COLOR, clrBlack);
    ObjectSetInteger(0, g_chkAbsorptionName, OBJPROP_BGCOLOR, g_detectAbsorption ? clrLightGreen : clrLightGray);
-   ObjectSetString(0, g_chkAbsorptionName, OBJPROP_FONT, FontName);
+   ObjectSetString(0, g_chkAbsorptionName, OBJPROP_FONT, JpFontName);
    ObjectSetInteger(0, g_chkAbsorptionName, OBJPROP_FONTSIZE, 9);
-   ObjectSetString(0, g_chkAbsorptionName, OBJPROP_TOOLTIP, "Large volume absorbing pressure");
+   ObjectSetString(0, g_chkAbsorptionName, OBJPROP_TOOLTIP, "売り圧力を吸収する大きなボリューム");
 
    // Checkbox (Iceberg)
    y += 25;
    ObjectCreate(0, g_chkIcebergName, OBJ_BUTTON, 0, 0, 0);
    ObjectSetInteger(0, g_chkIcebergName, OBJPROP_XDISTANCE, x);
    ObjectSetInteger(0, g_chkIcebergName, OBJPROP_YDISTANCE, y);
-   ObjectSetInteger(0, g_chkIcebergName, OBJPROP_XSIZE, 160);
+   ObjectSetInteger(0, g_chkIcebergName, OBJPROP_XSIZE, 180);
    ObjectSetInteger(0, g_chkIcebergName, OBJPROP_YSIZE, 22);
-   ObjectSetString(0, g_chkIcebergName, OBJPROP_TEXT, (g_detectIceberg ? "[X]" : "[ ]") + " Iceberg");
+   ObjectSetString(0, g_chkIcebergName, OBJPROP_TEXT, (g_detectIceberg ? "[X]" : "[ ]") + " アイスバーグ");
    ObjectSetInteger(0, g_chkIcebergName, OBJPROP_COLOR, clrBlack);
    ObjectSetInteger(0, g_chkIcebergName, OBJPROP_BGCOLOR, g_detectIceberg ? clrLightGreen : clrLightGray);
-   ObjectSetString(0, g_chkIcebergName, OBJPROP_FONT, FontName);
+   ObjectSetString(0, g_chkIcebergName, OBJPROP_FONT, JpFontName);
    ObjectSetInteger(0, g_chkIcebergName, OBJPROP_FONTSIZE, 9);
-   ObjectSetString(0, g_chkIcebergName, OBJPROP_TOOLTIP, "Consecutive large volume pattern");
+   ObjectSetString(0, g_chkIcebergName, OBJPROP_TOOLTIP, "連続する大きなボリュームのパターン");
 
    // Stats Label
    y += 35;
    ObjectCreate(0, g_lblStatsName, OBJ_LABEL, 0, 0, 0);
    ObjectSetInteger(0, g_lblStatsName, OBJPROP_XDISTANCE, x);
    ObjectSetInteger(0, g_lblStatsName, OBJPROP_YDISTANCE, y);
-   ObjectSetString(0, g_lblStatsName, OBJPROP_TEXT, "Statistics:");
-   ObjectSetString(0, g_lblStatsName, OBJPROP_FONT, FontName);
+   ObjectSetString(0, g_lblStatsName, OBJPROP_TEXT, "統計情報:");
+   ObjectSetString(0, g_lblStatsName, OBJPROP_FONT, JpFontName);
    ObjectSetInteger(0, g_lblStatsName, OBJPROP_FONTSIZE, 11);
    ObjectSetInteger(0, g_lblStatsName, OBJPROP_COLOR, clrWhite);
 
@@ -164,8 +164,8 @@ void CreateSimpleGUI() {
    ObjectCreate(0, g_lblCountName, OBJ_LABEL, 0, 0, 0);
    ObjectSetInteger(0, g_lblCountName, OBJPROP_XDISTANCE, x);
    ObjectSetInteger(0, g_lblCountName, OBJPROP_YDISTANCE, y);
-   ObjectSetString(0, g_lblCountName, OBJPROP_TEXT, "Count: 0");
-   ObjectSetString(0, g_lblCountName, OBJPROP_FONT, FontName);
+   ObjectSetString(0, g_lblCountName, OBJPROP_TEXT, "検出数: 0");
+   ObjectSetString(0, g_lblCountName, OBJPROP_FONT, JpFontName);
    ObjectSetInteger(0, g_lblCountName, OBJPROP_FONTSIZE, 10);
    ObjectSetInteger(0, g_lblCountName, OBJPROP_COLOR, clrAqua);
 
@@ -174,8 +174,8 @@ void CreateSimpleGUI() {
    ObjectCreate(0, g_lblLastName, OBJ_LABEL, 0, 0, 0);
    ObjectSetInteger(0, g_lblLastName, OBJPROP_XDISTANCE, x);
    ObjectSetInteger(0, g_lblLastName, OBJPROP_YDISTANCE, y);
-   ObjectSetString(0, g_lblLastName, OBJPROP_TEXT, "Last: -");
-   ObjectSetString(0, g_lblLastName, OBJPROP_FONT, FontName);
+   ObjectSetString(0, g_lblLastName, OBJPROP_TEXT, "最終検出: -");
+   ObjectSetString(0, g_lblLastName, OBJPROP_FONT, JpFontName);
    ObjectSetInteger(0, g_lblLastName, OBJPROP_FONTSIZE, 10);
    ObjectSetInteger(0, g_lblLastName, OBJPROP_COLOR, clrAqua);
 
@@ -205,13 +205,13 @@ void DeleteGUI() {
 //| Update Checkboxes                                                |
 //+------------------------------------------------------------------+
 void UpdateCheckboxes() {
-   ObjectSetString(0, g_chkAggressiveName, OBJPROP_TEXT, (g_detectAggressive ? "[X]" : "[ ]") + " Aggressive");
+   ObjectSetString(0, g_chkAggressiveName, OBJPROP_TEXT, (g_detectAggressive ? "[X]" : "[ ]") + " アグレッシブ");
    ObjectSetInteger(0, g_chkAggressiveName, OBJPROP_BGCOLOR, g_detectAggressive ? clrLightGreen : clrLightGray);
 
-   ObjectSetString(0, g_chkAbsorptionName, OBJPROP_TEXT, (g_detectAbsorption ? "[X]" : "[ ]") + " Absorption");
+   ObjectSetString(0, g_chkAbsorptionName, OBJPROP_TEXT, (g_detectAbsorption ? "[X]" : "[ ]") + " 吸収注文");
    ObjectSetInteger(0, g_chkAbsorptionName, OBJPROP_BGCOLOR, g_detectAbsorption ? clrLightGreen : clrLightGray);
 
-   ObjectSetString(0, g_chkIcebergName, OBJPROP_TEXT, (g_detectIceberg ? "[X]" : "[ ]") + " Iceberg");
+   ObjectSetString(0, g_chkIcebergName, OBJPROP_TEXT, (g_detectIceberg ? "[X]" : "[ ]") + " アイスバーグ");
    ObjectSetInteger(0, g_chkIcebergName, OBJPROP_BGCOLOR, g_detectIceberg ? clrLightGreen : clrLightGray);
 
    ChartRedraw();
@@ -221,17 +221,17 @@ void UpdateCheckboxes() {
 //| Update Stats                                                     |
 //+------------------------------------------------------------------+
 void UpdateStats() {
-   ObjectSetString(0, g_lblCountName, OBJPROP_TEXT, "Count: " + IntegerToString(g_detectionCount));
+   ObjectSetString(0, g_lblCountName, OBJPROP_TEXT, "検出数: " + IntegerToString(g_detectionCount));
 
    string lastTime = g_lastAlertTime > 0 ? TimeToString(g_lastAlertTime, TIME_MINUTES) : "-";
-   ObjectSetString(0, g_lblLastName, OBJPROP_TEXT, "Last: " + lastTime);
+   ObjectSetString(0, g_lblLastName, OBJPROP_TEXT, "最終検出: " + lastTime);
 }
 
 //+------------------------------------------------------------------+
 //| Update Stats Immediate (with ChartRedraw)                        |
 //+------------------------------------------------------------------+
 void UpdateStatsImmediate() {
-   string countText = "Count: " + IntegerToString(g_detectionCount);
+   string countText = "検出数: " + IntegerToString(g_detectionCount);
    ObjectSetString(0, g_lblCountName, OBJPROP_TEXT, countText);
 
    string lastTime = "-";
@@ -241,7 +241,7 @@ void UpdateStatsImmediate() {
    } else if(g_lastAlertTime > 0) {
       lastTime = TimeToString(g_lastAlertTime, TIME_MINUTES);
    }
-   ObjectSetString(0, g_lblLastName, OBJPROP_TEXT, "Last: " + lastTime);
+   ObjectSetString(0, g_lblLastName, OBJPROP_TEXT, "最終検出: " + lastTime);
 
    ChartRedraw(0);
 }
