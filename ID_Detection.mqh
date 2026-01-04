@@ -167,15 +167,18 @@ void RefreshDetectionLines() {
       if(detectResult == 0) continue;
 
       if(detectResult == 2) {
-         if(i < ArraySize(close) - 1) {
-            double nextChange = close[i+1] - close[i];
-            orderDirection = nextChange > 0 ? ORDER_DIR_BUY : ORDER_DIR_SELL;
-         } else {
-            continue;
-         }
+         orderDirection = ORDER_DIR_NEUTRAL;
       }
 
-      color lineColor = (orderDirection == ORDER_DIR_BUY) ? clrLime : clrRed;
+      // Color based on order type and direction
+      color lineColor;
+      if(orderType == DETECT_TYPE_ABSORPTION) {
+         lineColor = clrOrange;
+      } else if(orderDirection == ORDER_DIR_BUY) {
+         lineColor = clrLime;
+      } else {
+         lineColor = clrRed;
+      }
       string lineName = VLINE_PREFIX + IntegerToString(lineIdx++);
 
       ObjectCreate(0, lineName, OBJ_VLINE, 0, time[i], 0);
