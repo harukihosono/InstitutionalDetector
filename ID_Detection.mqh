@@ -60,9 +60,11 @@ void ApplyThreshold() {
 }
 
 //+------------------------------------------------------------------+
-//| Detect Order Type (Inline Optimized)                             |
+//| Detect Order Type (AsSeries=true version)                        |
+//| In AsSeries mode: index 0 = newest, larger index = older         |
+//| So to look back (older bars), we add to index: i+k               |
 //+------------------------------------------------------------------+
-int DetectOrderTypeFast(int i, double priceChange, double closePos,
+int DetectOrderTypeFast(int i, int maxIndex, double priceChange, double closePos,
                         string &orderType, string &orderDirection) {
    if(g_detectAggressive) {
       double threshold3x = InpPriceChangeThreshold * 3.0;
@@ -85,10 +87,11 @@ int DetectOrderTypeFast(int i, double priceChange, double closePos,
       }
    }
 
-   if(g_detectIceberg && i >= ICEBERG_LOOKBACK) {
+   // In AsSeries mode: lookback means higher indices (older bars)
+   if(g_detectIceberg && i + ICEBERG_LOOKBACK < maxIndex) {
       bool isIceberg = true;
       for(int k = 1; k <= ICEBERG_LOOKBACK; k++) {
-         if(i-k < 0 || VolumeZScoreBuffer[i-k] < ICEBERG_MIN_ZSCORE) {
+         if(VolumeZScoreBuffer[i + k] < ICEBERG_MIN_ZSCORE) {
             isIceberg = false;
             break;
          }
@@ -104,7 +107,7 @@ int DetectOrderTypeFast(int i, double priceChange, double closePos,
 }
 
 //+------------------------------------------------------------------+
-//| Refresh Detection Lines (Optimized)                              |
+//| Refresh Detection Lines (AsSeries=true version)                  |
 //+------------------------------------------------------------------+
 void RefreshDetectionLines() {
    if(g_isProcessing && !g_needFullRefresh) return;
@@ -136,25 +139,29 @@ void RefreshDetectionLines() {
    if(CopyPriceSeries(low, MODE_LOW, GetSymbol(), PERIOD_CURRENT) <= 0) return;
 #endif
 
-   ArraySetAsSeries(time, false);
-   ArraySetAsSeries(close, false);
-   ArraySetAsSeries(high, false);
-   ArraySetAsSeries(low, false);
+   // Match buffer direction: AsSeries=true (index 0 = newest)
+   ArraySetAsSeries(time, true);
+   ArraySetAsSeries(close, true);
+   ArraySetAsSeries(high, true);
+   ArraySetAsSeries(low, true);
 
    int detected_count = 0;
    datetime lastDetTime = 0;
    int lineIdx = 0;
 
-   int startIdx = InpLookbackPeriod;
-   int endIdx = MathMin(copyCount, bufferSize);
+   // Process from oldest to newest
+   // VolumeZScoreBuffer is already fully calculated by OnCalculate
+   int maxIdx = copyCount - InpLookbackPeriod - 1;
+   if(maxIdx < 0) maxIdx = 0;
 
-   for(int i = startIdx; i < endIdx; i++) {
+   for(int i = maxIdx; i >= 0; i--) {
       double zscore = VolumeZScoreBuffer[i];
       if(zscore <= g_currentThreshold) continue;
 
-      if(i <= 0 || i >= ArraySize(close)) continue;
+      // Need older bar for price change (i+1 is older in AsSeries mode)
+      if(i + 1 >= copyCount) continue;
 
-      double priceChange = (close[i] - close[i-1]) / close[i-1];
+      double priceChange = (close[i] - close[i + 1]) / close[i + 1];
       double closePos = 0.5;
       if(high[i] - low[i] > 0) {
          closePos = (close[i] - low[i]) / (high[i] - low[i]);
@@ -163,7 +170,7 @@ void RefreshDetectionLines() {
       string orderType = "";
       string orderDirection = "";
 
-      int detectResult = DetectOrderTypeFast(i, priceChange, closePos, orderType, orderDirection);
+      int detectResult = DetectOrderTypeFast(i, copyCount, priceChange, closePos, orderType, orderDirection);
       if(detectResult == 0) continue;
 
       if(detectResult == 2) {

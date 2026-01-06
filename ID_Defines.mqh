@@ -19,7 +19,7 @@
 //| Constants                                                        |
 //+------------------------------------------------------------------+
 #define INDICATOR_NAME       "Institutional Detector"
-#define VERSION             "1.12"
+#define VERSION             "1.15"
 
 // Detection Types
 #define DETECT_TYPE_AGGRESSIVE   "AGGRESSIVE"

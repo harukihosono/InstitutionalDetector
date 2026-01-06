@@ -1,11 +1,11 @@
 //+------------------------------------------------------------------+
 //|                                     InstitutionalDetector.mq5   |
 //|                              Institutional Order Detector       |
-//|                              MQL4/MQL5 Compatible (Optimized)   |
+//|                              MQL5 Version                       |
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2024"
 #property link      ""
-#property version   "1.12"
+#property version   "1.15"
 #property description "Detects institutional order patterns"
 
 #property indicator_separate_window
@@ -60,7 +60,7 @@ int OnInit() {
    SetIndexBuffer(4, VolumeMABuffer, INDICATOR_CALCULATIONS);
    SetIndexBuffer(5, VolumeStdBuffer, INDICATOR_CALCULATIONS);
 
-#ifdef IS_MQL5
+   // MT5: Plot settings
    PlotIndexSetInteger(2, PLOT_ARROW, 159);
    PlotIndexSetDouble(2, PLOT_EMPTY_VALUE, EMPTY_VALUE);
    IndicatorSetString(INDICATOR_SHORTNAME,
@@ -70,13 +70,15 @@ int OnInit() {
    IndicatorSetDouble(INDICATOR_LEVELVALUE, 1, -InpVolumeThreshold);
    IndicatorSetString(INDICATOR_LEVELTEXT, 0, "Upper");
    IndicatorSetString(INDICATOR_LEVELTEXT, 1, "Lower");
-#else
-   SetIndexArrow(2, 159);
-   SetIndexEmptyValue(2, EMPTY_VALUE);
-   IndicatorShortName(INDICATOR_NAME + " (" + IntegerToString(InpLookbackPeriod) + ")");
-   SetLevelValue(0, InpVolumeThreshold);
-   SetLevelValue(1, -InpVolumeThreshold);
-#endif
+
+   // MT5: Set buffer direction to AsSeries=true (index 0 = newest)
+   // This makes it consistent with MT4 behavior
+   ArraySetAsSeries(VolumeBuffer, true);
+   ArraySetAsSeries(VolumeZScoreBuffer, true);
+   ArraySetAsSeries(SignalBuffer, true);
+   ArraySetAsSeries(ThresholdBuffer, true);
+   ArraySetAsSeries(VolumeMABuffer, true);
+   ArraySetAsSeries(VolumeStdBuffer, true);
 
    g_currentThreshold = InpVolumeThreshold;
    g_detectAggressive = InpDetectAggressive;
@@ -121,23 +123,47 @@ int OnCalculate(const int rates_total,
    if(rates_total < InpLookbackPeriod + 1)
       return(0);
 
-   int start;
+   // MT5: Set all arrays to time-series mode (index 0 = newest bar)
+   ArraySetAsSeries(time, true);
+   ArraySetAsSeries(open, true);
+   ArraySetAsSeries(high, true);
+   ArraySetAsSeries(low, true);
+   ArraySetAsSeries(close, true);
+   ArraySetAsSeries(tick_volume, true);
+   ArraySetAsSeries(volume, true);
+   ArraySetAsSeries(spread, true);
+
+   // Calculate limit - how far back to calculate
+   int limit;
    if(prev_calculated == 0 || g_needFullRefresh) {
-      start = InpLookbackPeriod;
+      // First run or full refresh: calculate all bars
+      limit = rates_total - InpLookbackPeriod - 1;
       g_needFullRefresh = false;
+      g_detectionCount = 0;
    } else {
-      start = prev_calculated - 1;
+      // Incremental update: only new bars
+      limit = rates_total - prev_calculated;
    }
 
-   int local_detection_count = (prev_calculated == 0) ? 0 : g_detectionCount;
+   // Ensure limit doesn't exceed available data
+   if(limit > rates_total - InpLookbackPeriod - 1)
+      limit = rates_total - InpLookbackPeriod - 1;
+
+   // Guard against negative limit
+   if(limit < 0)
+      limit = 0;
+
+   int local_detection_count = g_detectionCount;
    datetime local_last_detection = g_lastDetectionTime;
 
-   for(int i = start; i < rates_total && !IsStopped(); i++) {
+   // PASS 1: Calculate all buffers first (from oldest to newest)
+   // This ensures VolumeZScoreBuffer is fully populated before detection
+   for(int i = limit; i >= 0 && !IsStopped(); i--) {
       VolumeBuffer[i] = (double)tick_volume[i];
 
-      double sum = 0, sum2 = 0;
+      double sum = 0.0, sum2 = 0.0;
       for(int j = 0; j < InpLookbackPeriod; j++) {
-         double vol = (double)tick_volume[i-j];
+         double vol = (double)tick_volume[i + j];
          sum += vol;
          sum2 += vol * vol;
       }
@@ -149,14 +175,18 @@ int OnCalculate(const int rates_total,
       VolumeZScoreBuffer[i] = (VolumeBuffer[i] - VolumeMABuffer[i]) / VolumeStdBuffer[i];
       ThresholdBuffer[i] = g_currentThreshold;
       SignalBuffer[i] = EMPTY_VALUE;
+   }
 
+   // PASS 2: Detection logic (now all buffers are calculated)
+   for(int i = limit; i >= 0 && !IsStopped(); i--) {
       if(VolumeZScoreBuffer[i] > g_currentThreshold) {
          string orderType = "";
          string orderDirection = "";
          bool detected = false;
 
-         if(i > 0) {
-            double priceChange = (close[i] - close[i-1]) / close[i-1];
+         // Need previous bar for price change (i+1 is older bar in AsSeries mode)
+         if(i < rates_total - 1) {
+            double priceChange = (close[i] - close[i + 1]) / close[i + 1];
 
             if(g_detectAggressive && MathAbs(priceChange) > InpPriceChangeThreshold * 3) {
                orderType = DETECT_TYPE_AGGRESSIVE;
@@ -168,10 +198,10 @@ int OnCalculate(const int rates_total,
                orderDirection = ORDER_DIR_NEUTRAL;
                detected = true;
             }
-            else if(g_detectIceberg && i >= ICEBERG_LOOKBACK) {
+            else if(g_detectIceberg && i + ICEBERG_LOOKBACK < rates_total) {
                bool isIceberg = true;
                for(int k = 1; k <= ICEBERG_LOOKBACK; k++) {
-                  if(VolumeZScoreBuffer[i-k] < ICEBERG_MIN_ZSCORE) {
+                  if(VolumeZScoreBuffer[i + k] < ICEBERG_MIN_ZSCORE) {
                      isIceberg = false;
                      break;
                   }
@@ -179,7 +209,8 @@ int OnCalculate(const int rates_total,
 
                if(isIceberg) {
                   orderType = DETECT_TYPE_ICEBERG;
-                  double closePosition = (close[i] - low[i]) / (high[i] - low[i]);
+                  double closePosition = (high[i] - low[i]) > 0 ?
+                     (close[i] - low[i]) / (high[i] - low[i]) : 0.5;
                   orderDirection = closePosition > ICEBERG_CLOSE_RATIO ? ORDER_DIR_BUY : ORDER_DIR_SELL;
                   detected = true;
                }
@@ -192,7 +223,6 @@ int OnCalculate(const int rates_total,
                if(ObjectFind(0, lineName) < 0) {
                   ObjectCreate(0, lineName, OBJ_VLINE, 0, time[i], 0);
 
-                  // Color based on order type and direction
                   color lineColor;
                   if(orderType == DETECT_TYPE_ABSORPTION) {
                      lineColor = clrOrange;
@@ -202,7 +232,6 @@ int OnCalculate(const int rates_total,
                      lineColor = clrRed;
                   }
                   ObjectSetInteger(0, lineName, OBJPROP_COLOR, lineColor);
-
                   ObjectSetInteger(0, lineName, OBJPROP_STYLE, STYLE_DOT);
                   ObjectSetInteger(0, lineName, OBJPROP_WIDTH, 1);
                   ObjectSetInteger(0, lineName, OBJPROP_BACK, true);
@@ -219,7 +248,8 @@ int OnCalculate(const int rates_total,
                local_detection_count++;
                local_last_detection = time[i];
 
-               if(i == rates_total - 1 && time[i] != g_lastAlertTime) {
+               // Alert only for the most recent bar (index 0)
+               if(i == 0 && time[i] != g_lastAlertTime) {
                   g_lastAlertTime = time[i];
                   SendDetectionAlert(orderType, orderDirection, close[i], VolumeZScoreBuffer[i]);
                }

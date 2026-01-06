@@ -70,6 +70,7 @@ int GetWindowFind(string name) {
 
 //+------------------------------------------------------------------+
 //| MQL4 Compatible Array Copy Functions                             |
+//| Returns arrays in AsSeries=true format (index 0 = newest bar)    |
 //+------------------------------------------------------------------+
 #ifndef IS_MQL5
 
@@ -77,21 +78,20 @@ int CopyPriceSeries(double &dest[], int series_index, string symbol, int timefra
    int bars = Bars;
    if(ArrayResize(dest, bars) != bars) return 0;
 
-   // Convert from time-series (0=newest) to array order (0=oldest)
+   // Return in time-series order (0=newest) - matches iOpen/iClose/etc
    for(int i = 0; i < bars; i++) {
-      int barIdx = bars - 1 - i;
       switch(series_index) {
          case MODE_OPEN:
-            dest[i] = iOpen(symbol, timeframe, barIdx);
+            dest[i] = iOpen(symbol, timeframe, i);
             break;
          case MODE_HIGH:
-            dest[i] = iHigh(symbol, timeframe, barIdx);
+            dest[i] = iHigh(symbol, timeframe, i);
             break;
          case MODE_LOW:
-            dest[i] = iLow(symbol, timeframe, barIdx);
+            dest[i] = iLow(symbol, timeframe, i);
             break;
          case MODE_CLOSE:
-            dest[i] = iClose(symbol, timeframe, barIdx);
+            dest[i] = iClose(symbol, timeframe, i);
             break;
          default:
             return 0;
@@ -104,10 +104,9 @@ int CopyTimeSeries(datetime &dest[], string symbol, int timeframe) {
    int bars = Bars;
    if(ArrayResize(dest, bars) != bars) return 0;
 
-   // Convert from time-series (0=newest) to array order (0=oldest)
+   // Return in time-series order (0=newest) - matches iTime
    for(int i = 0; i < bars; i++) {
-      int barIdx = bars - 1 - i;
-      dest[i] = iTime(symbol, timeframe, barIdx);
+      dest[i] = iTime(symbol, timeframe, i);
    }
    return bars;
 }
@@ -140,9 +139,11 @@ double ClampThreshold(double value) {
 
 //+------------------------------------------------------------------+
 //| Generate Line Name                                               |
+//| Note: Uses time only (not index) because index shifts in AsSeries|
 //+------------------------------------------------------------------+
 string GenerateLineName(int index, datetime time) {
-   return VLINE_PREFIX + IntegerToString(index) + "_" + TimeToString(time);
+   // Use time only - index shifts when new bars are added in AsSeries mode
+   return VLINE_PREFIX + TimeToString(time, TIME_DATE|TIME_MINUTES);
 }
 
 #endif // ID_UTILS_MQH
